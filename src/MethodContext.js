@@ -7,9 +7,22 @@ import { EventEmitter } from './EventEmitter';
 В качестве callback нужно передавать тот же самый обработчик, который был передан при подписке.
  */
 export const obj = {
-    count: 0,
-    subscribe() {},
-    unsubscribe() {},
+  count: 0,
+  _clickHandler: null,
+
+  subscribe() {
+    if (!this._clickHandler) {
+      this._clickHandler = () => {
+        this.count += 1;
+      };
+    }
+
+    EventEmitter.on('click', this._clickHandler);
+  },
+
+  unsubscribe() {
+    EventEmitter.off('click', this._clickHandler);
+  },
 };
 
 /*
@@ -19,8 +32,11 @@ obj1.first(1, 2, 3);
 // Внутренний вызов должен быть равносилен obj1.second(3, 2, 1)
  */
 export const obj1 = {
-    first(...args) {},
-    second() {
-        // здесь ничего писать не нужно
-    },
+  first(...args) {
+    this.second(...args.reverse());
+  },
+
+  second() {
+    // здесь ничего писать не нужно
+  },
 };
